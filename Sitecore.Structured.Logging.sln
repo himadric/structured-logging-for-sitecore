@@ -6,9 +6,6 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Feature", "Feature", "{17DD5718-6E13-4F2C-9738-B410396D4552}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Foundation", "Foundation", "{4FDA1DCD-D33E-447E-91C1-F4AE818E2CF0}"
-	ProjectSection(SolutionItems) = preProject
-		src\Foundation\code\README.md = src\Foundation\code\README.md
-	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Project", "Project", "{15D97D61-D597-42EC-B7E9-E9EC8130E630}"
 EndProject
@@ -18,7 +15,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Configuration", "Configurat
 		.gitattributes = .gitattributes
 		.gitignore = .gitignore
 		nuget.config = nuget.config
-		README.md = README.md
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Foundation.SerilogAppender", "Foundation.SerilogAppender\Foundation.SerilogAppender.csproj", "{26964848-BD12-497F-A268-018CC2E4CF1A}"
@@ -48,7 +44,7 @@ Global
 		{D7CEB534-C0D7-4D29-95D3-6DB36CA36416} = {15D97D61-D597-42EC-B7E9-E9EC8130E630}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {311DA37D-528B-43B2-A99B-E7253F841D46}
 		EnterpriseLibraryConfigurationToolBinariesPathV6 = packages\EnterpriseLibrary.Common.6.0.1304.0\lib\NET45;packages\EnterpriseLibrary.TransientFaultHandling.6.0.1304.0\lib\portable-net45+win+wp8;packages\EnterpriseLibrary.TransientFaultHandling.Caching.6.0.1304.0\lib\NET45;packages\EnterpriseLibrary.TransientFaultHandling.Data.6.0.1304.1\lib\NET45;packages\EnterpriseLibrary.TransientFaultHandling.ServiceBus.6.0.1304.0\lib\NET45;packages\EnterpriseLibrary.TransientFaultHandling.WindowsAzure.Storage.6.0.1304.0\lib\NET45;packages\EnterpriseLibrary.TransientFaultHandling.Configuration.6.0.1304.0\lib\NET45
+		SolutionGuid = {311DA37D-528B-43B2-A99B-E7253F841D46}
 	EndGlobalSection
 EndGlobal
