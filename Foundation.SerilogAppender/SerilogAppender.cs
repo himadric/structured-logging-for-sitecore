@@ -1,6 +1,7 @@
 ﻿using log4net.helpers;
 using log4net.spi;
 using System;
+using Newtonsoft.Json.Linq;
 using Serilog;
 using Serilog.Core;
 using Serilog.Events;
@@ -66,6 +67,63 @@ namespace log4net.Appender
         /// <param name="events">The logging events to send.</param>
         protected override void SendBuffer(LoggingEvent[] events)
         {
+            foreach (var thisEvent in events)
+            {
+                LogEvent(thisEvent);
+            }
+
+        }
+
+        /// <summary>
+        /// This appender requires a <see cref="N:log4net.Layout" /> to be set.
+        /// </summary>
+        /// <value><c>true</c></value>
+        protected override bool RequiresLayout => true;
+
+        private void LogEvent(LoggingEvent loggingEvent)
+        {
+            using (var log = new LoggerConfiguration()
+                .MinimumLevel.ControlledBy(new LoggingLevelSwitch(GetLogEventLevel()))
+                .Enrich.WithMachineName()
+                .Enrich.WithEnvironmentUserName()
+                .Enrich.WithProcessId()
+                .Enrich.WithProcessName()
+                //.Enrich.WithProperty("ThreadId", SystemInfo.CurrentThreadId)
+                .Enrich.WithMemoryUsage()
+                .WriteTo.Seq(_seqHost, apiKey: _apiKey)
+                .CreateLogger())
+            {
+                try
+                {
+                    if (loggingEvent.Level == Level.DEBUG)
+                    {
+                        log.Debug(loggingEvent.RenderedMessage);
+                    }
+                    if (loggingEvent.Level == Level.INFO)
+                    {
+                        log.Information(loggingEvent.RenderedMessage);
+                    }
+                    if (loggingEvent.Level == Level.WARN)
+                    {
+                        log.Warning(loggingEvent.RenderedMessage);
+                    }
+                    if (loggingEvent.Level == Level.ERROR)
+                    {
+                        log.Error(loggingEvent.RenderedMessage);
+                    }
+                    if (loggingEvent.Level == Level.FATAL)
+                    {
+                        log.Fatal(loggingEvent.RenderedMessage);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    this.ErrorHandler.Error("Error occurred while sending e-mail notification.", ex);
+                }
+            }
+        }
+        private LogEventLevel GetLogEventLevel()
+        {
             var logEventLevel = LogEventLevel.Debug;
             switch (MinimumLevel.ToLower())
             {
@@ -85,52 +143,8 @@ namespace log4net.Appender
                     logEventLevel = LogEventLevel.Fatal;
                     break;
             }
-            using (var log = new LoggerConfiguration()
-                .MinimumLevel.ControlledBy(new LoggingLevelSwitch(logEventLevel))
-                .WriteTo.Seq(_seqHost,apiKey: _apiKey)
-                .CreateLogger())
-            {
-                try
-                {
-                    var hostName = SystemInfo.HostName;
-                    for (var index = 0; index < events.Length; ++index)
-                    {
-                        if (events[index].Properties["log4net:HostName"] == null)
-                            events[index].Properties["log4net:HostName"] = (object)hostName;
 
-                        if (events[index].Level == Level.DEBUG)
-                        {
-                            log.Debug("{@event}", events[index]);
-                        }
-                        if (events[index].Level == Level.INFO)
-                        {
-                            log.Information("{@event}", events[index]);
-                        }
-                        if (events[index].Level == Level.WARN)
-                        {
-                            log.Warning("{@event}", events[index]);
-                        }
-                        if (events[index].Level == Level.ERROR)
-                        {
-                            log.Error("{@event}", events[index]);
-                        }
-                        if (events[index].Level == Level.FATAL)
-                        {
-                            log.Fatal("{@event}", events[index]);
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    this.ErrorHandler.Error("Error occurred while sending e-mail notification.", ex);
-                }
-            }
+            return logEventLevel;
         }
-
-        /// <summary>
-        /// This appender requires a <see cref="N:log4net.Layout" /> to be set.
-        /// </summary>
-        /// <value><c>true</c></value>
-        protected override bool RequiresLayout => true;
     }
 }
