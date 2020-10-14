@@ -1,7 +1,5 @@
-﻿using log4net.helpers;
-using log4net.spi;
+﻿using log4net.spi;
 using System;
-using Newtonsoft.Json.Linq;
 using Serilog;
 using Serilog.Core;
 using Serilog.Events;
