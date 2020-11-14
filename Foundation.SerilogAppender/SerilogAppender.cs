@@ -119,7 +119,7 @@ namespace log4net.Appender
             }
             catch (Exception ex)
             {
-                this.ErrorHandler.Error("Error occurred while sending e-mail notification.", ex);
+                this.ErrorHandler.Error("Error occurred while logging the event.", ex);
             }
         }
         private LogEventLevel GetLogEventLevel()
