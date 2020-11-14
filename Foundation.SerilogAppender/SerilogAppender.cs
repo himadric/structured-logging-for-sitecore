@@ -1,5 +1,6 @@
 ﻿using log4net.spi;
 using System;
+using log4net.helpers;
 using Serilog;
 using Serilog.Core;
 using Serilog.Events;
@@ -14,9 +15,9 @@ namespace log4net.Appender
         private string _seqHost;
 
         /// <summary>
-        /// Gets or sets a semicolon-delimited list of recipient e-mail addresses.
+        /// Gets or sets minimum logging level.
         /// </summary>
-        /// <value>A semicolon-delimited list of e-mail addresses.</value>
+        /// <value></value>
         public string MinimumLevel
         {
             get => this._minimumLevel;
@@ -82,11 +83,12 @@ namespace log4net.Appender
         {
             using (var log = new LoggerConfiguration()
                 .MinimumLevel.ControlledBy(new LoggingLevelSwitch(GetLogEventLevel()))
+                .Enrich.FromLogContext()
                 .Enrich.WithMachineName()
                 .Enrich.WithEnvironmentUserName()
                 .Enrich.WithProcessId()
                 .Enrich.WithProcessName()
-                //.Enrich.WithProperty("ThreadId", SystemInfo.CurrentThreadId)
+                .Enrich.WithProperty("ThreadId", SystemInfo.CurrentThreadId)
                 .Enrich.WithMemoryUsage()
                 .WriteTo.Seq(_seqHost, apiKey: _apiKey)
                 .CreateLogger())
