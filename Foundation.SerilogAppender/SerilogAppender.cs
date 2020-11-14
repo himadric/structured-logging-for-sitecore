@@ -66,21 +66,6 @@ namespace log4net.Appender
         /// <param name="events">The logging events to send.</param>
         protected override void SendBuffer(LoggingEvent[] events)
         {
-            foreach (var thisEvent in events)
-            {
-                LogEvent(thisEvent);
-            }
-
-        }
-
-        /// <summary>
-        /// This appender requires a <see cref="N:log4net.Layout" /> to be set.
-        /// </summary>
-        /// <value><c>true</c></value>
-        protected override bool RequiresLayout => true;
-
-        private void LogEvent(LoggingEvent loggingEvent)
-        {
             using (var log = new LoggerConfiguration()
                 .MinimumLevel.ControlledBy(new LoggingLevelSwitch(GetLogEventLevel()))
                 .Enrich.FromLogContext()
@@ -93,33 +78,48 @@ namespace log4net.Appender
                 .WriteTo.Seq(_seqHost, apiKey: _apiKey)
                 .CreateLogger())
             {
-                try
+                foreach (var thisEvent in events)
                 {
-                    if (loggingEvent.Level == Level.DEBUG)
-                    {
-                        log.Debug(loggingEvent.RenderedMessage);
-                    }
-                    if (loggingEvent.Level == Level.INFO)
-                    {
-                        log.Information(loggingEvent.RenderedMessage);
-                    }
-                    if (loggingEvent.Level == Level.WARN)
-                    {
-                        log.Warning(loggingEvent.RenderedMessage);
-                    }
-                    if (loggingEvent.Level == Level.ERROR)
-                    {
-                        log.Error(loggingEvent.RenderedMessage);
-                    }
-                    if (loggingEvent.Level == Level.FATAL)
-                    {
-                        log.Fatal(loggingEvent.RenderedMessage);
-                    }
+                    LogEvent(log, thisEvent);
                 }
-                catch (Exception ex)
+            }
+
+        }
+
+        /// <summary>
+        /// This appender requires a <see cref="N:log4net.Layout" /> to be set.
+        /// </summary>
+        /// <value><c>true</c></value>
+        protected override bool RequiresLayout => true;
+
+        private void LogEvent(Logger log, LoggingEvent loggingEvent)
+        {
+            try
+            {
+                if (loggingEvent.Level == Level.DEBUG)
                 {
-                    this.ErrorHandler.Error("Error occurred while sending e-mail notification.", ex);
+                    log.Debug(loggingEvent.RenderedMessage);
                 }
+                if (loggingEvent.Level == Level.INFO)
+                {
+                    log.Information(loggingEvent.RenderedMessage);
+                }
+                if (loggingEvent.Level == Level.WARN)
+                {
+                    log.Warning(loggingEvent.RenderedMessage);
+                }
+                if (loggingEvent.Level == Level.ERROR)
+                {
+                    log.Error(loggingEvent.RenderedMessage);
+                }
+                if (loggingEvent.Level == Level.FATAL)
+                {
+                    log.Fatal(loggingEvent.RenderedMessage);
+                }
+            }
+            catch (Exception ex)
+            {
+                this.ErrorHandler.Error("Error occurred while sending e-mail notification.", ex);
             }
         }
         private LogEventLevel GetLogEventLevel()
